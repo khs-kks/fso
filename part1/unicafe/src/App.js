@@ -53,6 +53,19 @@ const App = () => {
     return (good / (good + neutral + bad)) * 100;
   };
 
+  if (good === 0 && neutral === 0 && bad === 0) {
+    return (
+      <div>
+        <h1>give feedback</h1>
+        <Button handleClick={incrementGood} text="good"></Button>
+        <Button handleClick={incrementNeutral} text="neutral"></Button>
+        <Button handleClick={incrementBad} text="bad"></Button>
+        <h1>statistics</h1>
+        <div>No feedback given</div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1>give feedback</h1>

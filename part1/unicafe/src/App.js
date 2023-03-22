@@ -7,22 +7,64 @@ const Button = (props) => {
   return <button onClick={handleClick}>{text}</button>;
 };
 
+// const StatisticsLine = (props) => {
+//   const { text, value } = props;
+
+//   if (text === "positive") {
+//     return (
+//       <div>
+//         {" "}
+//         {text} {value} {"%"}
+//       </div>
+//     );
+//   }
+//   return (
+//     <div>
+//       {" "}
+//       {text} {value}{" "}
+//     </div>
+//   );
+// };
+
+// const Statistics = (props) => {
+//   const { goodValue, neutralValue, badValue, avg, prcPositive } = props.total;
+
+//   if (goodValue === 0 && neutralValue === 0 && badValue === 0) {
+//     return <div>No feedback given</div>;
+//   }
+
+//   return (
+//     <>
+//       <StatisticsLine text="good" value={goodValue}></StatisticsLine>
+//       <StatisticsLine text="neutral" value={neutralValue}></StatisticsLine>
+//       <StatisticsLine text="bad" value={badValue}></StatisticsLine>
+//       <StatisticsLine
+//         text="all"
+//         value={goodValue + neutralValue + badValue}
+//       ></StatisticsLine>
+//       <StatisticsLine text="average" value={avg}></StatisticsLine>
+//       <StatisticsLine text="positive" value={prcPositive}></StatisticsLine>
+//     </>
+//   );
+// };
+
 const StatisticsLine = (props) => {
   const { text, value } = props;
 
   if (text === "positive") {
     return (
-      <div>
-        {" "}
-        {text} {value} {"%"}
-      </div>
+      <tr>
+        <td>{text}</td>
+        <td>{value}%</td>
+      </tr>
     );
   }
+  
   return (
-    <div>
-      {" "}
-      {text} {value}{" "}
-    </div>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   );
 };
 
@@ -34,19 +76,19 @@ const Statistics = (props) => {
   }
 
   return (
-    <>
-      <StatisticsLine text="good" value={goodValue}></StatisticsLine>
-      <StatisticsLine text="neutral" value={neutralValue}></StatisticsLine>
-      <StatisticsLine text="bad" value={badValue}></StatisticsLine>
-      <StatisticsLine
-        text="all"
-        value={goodValue + neutralValue + badValue}
-      ></StatisticsLine>
-      <StatisticsLine text="average" value={avg}></StatisticsLine>
-      <StatisticsLine text="positive" value={prcPositive}></StatisticsLine>
-    </>
+    <table>
+      <tbody>
+        <StatisticsLine text="good" value={goodValue} />
+        <StatisticsLine text="neutral" value={neutralValue} />
+        <StatisticsLine text="bad" value={badValue} />
+        <StatisticsLine text="all" value={goodValue + neutralValue + badValue} />
+        <StatisticsLine text="average" value={avg} />
+        <StatisticsLine text="positive" value={prcPositive} />
+      </tbody>
+    </table>
   );
 };
+
 
 const App = () => {
   // save clicks of each button to its own state

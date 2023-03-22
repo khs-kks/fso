@@ -8,14 +8,22 @@ const Button = (props) => {
 };
 
 const Statistics = (props) => {
-  const { good, neutral, bad } = props;
+  // const { good, neutral, bad } = props;
+  const { text, total } = props;
 
+  if (text === "positive") {
+    return (
+      <div>
+        {" "}
+        {text} {total} {"%"}
+      </div>
+    );
+  }
   return (
-    <>
-      <div>good {good}</div>
-      <div>neutral {neutral}</div>
-      <div>bad {bad}</div>
-    </>
+    <div>
+      {" "}
+      {text} {total}{" "}
+    </div>
   );
 };
 
@@ -37,6 +45,14 @@ const App = () => {
     setBad(bad + 1);
   };
 
+  const avgScore = () => {
+    return (good - bad) / (good + neutral + bad);
+  };
+
+  const prcPositiveFeedback = () => {
+    return (good / (good + neutral + bad)) * 100;
+  };
+
   return (
     <div>
       <h1>give feedback</h1>
@@ -44,7 +60,12 @@ const App = () => {
       <Button handleClick={incrementNeutral} text="neutral"></Button>
       <Button handleClick={incrementBad} text="bad"></Button>
       <h1>statistics</h1>
-      <Statistics good={good} neutral={neutral} bad={bad}></Statistics>
+      <Statistics text="good" total={good}></Statistics>
+      <Statistics text="neutral" total={neutral}></Statistics>
+      <Statistics text="bad" total={bad}></Statistics>
+      <Statistics text="all" total={good + neutral + bad}></Statistics>
+      <Statistics text="average" total={avgScore()}></Statistics>
+      <Statistics text="positive" total={prcPositiveFeedback()}></Statistics>
     </div>
   );
 };

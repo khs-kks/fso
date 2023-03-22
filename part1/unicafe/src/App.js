@@ -7,23 +7,44 @@ const Button = (props) => {
   return <button onClick={handleClick}>{text}</button>;
 };
 
-const Statistics = (props) => {
-  // const { good, neutral, bad } = props;
-  const { text, total } = props;
+const StatisticsLine = (props) => {
+  const { text, value } = props;
 
   if (text === "positive") {
     return (
       <div>
         {" "}
-        {text} {total} {"%"}
+        {text} {value} {"%"}
       </div>
     );
   }
   return (
     <div>
       {" "}
-      {text} {total}{" "}
+      {text} {value}{" "}
     </div>
+  );
+};
+
+const Statistics = (props) => {
+  const { goodValue, neutralValue, badValue, avg, prcPositive } = props.total;
+
+  if (goodValue === 0 && neutralValue === 0 && badValue === 0) {
+    return <div>No feedback given</div>;
+  }
+
+  return (
+    <>
+      <StatisticsLine text="good" value={goodValue}></StatisticsLine>
+      <StatisticsLine text="neutral" value={neutralValue}></StatisticsLine>
+      <StatisticsLine text="bad" value={badValue}></StatisticsLine>
+      <StatisticsLine
+        text="all"
+        value={goodValue + neutralValue + badValue}
+      ></StatisticsLine>
+      <StatisticsLine text="average" value={avg}></StatisticsLine>
+      <StatisticsLine text="positive" value={prcPositive}></StatisticsLine>
+    </>
   );
 };
 
@@ -53,18 +74,13 @@ const App = () => {
     return (good / (good + neutral + bad)) * 100;
   };
 
-  if (good === 0 && neutral === 0 && bad === 0) {
-    return (
-      <div>
-        <h1>give feedback</h1>
-        <Button handleClick={incrementGood} text="good"></Button>
-        <Button handleClick={incrementNeutral} text="neutral"></Button>
-        <Button handleClick={incrementBad} text="bad"></Button>
-        <h1>statistics</h1>
-        <div>No feedback given</div>
-      </div>
-    );
-  }
+  const everyStat = {
+    goodValue: good,
+    neutralValue: neutral,
+    badValue: bad,
+    avg: avgScore(),
+    prcPositive: prcPositiveFeedback(),
+  };
 
   return (
     <div>
@@ -73,12 +89,7 @@ const App = () => {
       <Button handleClick={incrementNeutral} text="neutral"></Button>
       <Button handleClick={incrementBad} text="bad"></Button>
       <h1>statistics</h1>
-      <Statistics text="good" total={good}></Statistics>
-      <Statistics text="neutral" total={neutral}></Statistics>
-      <Statistics text="bad" total={bad}></Statistics>
-      <Statistics text="all" total={good + neutral + bad}></Statistics>
-      <Statistics text="average" total={avgScore()}></Statistics>
-      <Statistics text="positive" total={prcPositiveFeedback()}></Statistics>
+      <Statistics total={everyStat}></Statistics>
     </div>
   );
 };

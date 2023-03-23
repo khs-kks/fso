@@ -39,6 +39,7 @@ const App = () => {
 
   const mostVoted = Math.max(...votes);
   const maxVotedIndex = votes.indexOf(mostVoted);
+  
 
   return (
     <>

@@ -19,6 +19,7 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0));
 
   const nextAnecdote = () => {
     // Generate a random index between 0 and list.length-1
@@ -30,9 +31,17 @@ const App = () => {
     setSelected(randomIndex);
   };
 
+  const voteForAnecdote = () => {
+    const temp = [...votes];
+    temp[selected] += 1;
+    setVotes(temp);
+  };
+
   return (
     <>
-      <div>{anecdotes[selected]}</div>
+      <h2>{anecdotes[selected]}</h2>
+      <h3>has {votes[selected]} votes</h3>
+      <Button textContent="vote" handleClick={voteForAnecdote}></Button>
       <Button textContent="Next anecdote" handleClick={nextAnecdote}></Button>
     </>
   );

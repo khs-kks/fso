@@ -1,5 +1,79 @@
 import { useState } from "react";
 
+const Filter = (props) => {
+  const { value, onChange } = props;
+  return (
+    <input
+      type="text"
+      value={value}
+      onChange={onChange}
+      placeholder="search for a person"
+    ></input>
+  );
+};
+
+const PersonForm = (props) => {
+  const {
+    handleSubmit,
+    newName,
+    handleNameChange,
+    newPhone,
+    handlePhoneChange,
+  } = props;
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="name">Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          value={newName}
+          onChange={handleNameChange}
+          placeholder="Put your name here"
+        />
+      </div>
+      <div>
+        <label htmlFor="phone">Phone:</label>
+        <input
+          type="text"
+          id="phone"
+          name="phone"
+          value={newPhone}
+          onChange={handlePhoneChange}
+          placeholder="Put your tel phone here"
+        />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
+};
+
+const Person = ({ person }) => {
+  return (
+    <li>
+      {person.name} {person.phone}
+    </li>
+  );
+};
+
+const Persons = ({ persons, newSearch }) => {
+  const filteredPersons = persons.filter((person) =>
+    person.name.toLowerCase().includes(newSearch.toLowerCase())
+  );
+
+  return (
+    <ul>
+      {filteredPersons.map((person) => (
+        <Person key={person.id} person={person} />
+      ))}
+    </ul>
+  );
+};
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", phone: "040-123456", id: 1 },
@@ -51,52 +125,20 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <input
-        type="text"
-        value={newSearch}
-        onChange={handleSearchChange}
-        placeholder="search for a person"
-      ></input>
-      <h2>add a new</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={newName}
-            onChange={handleNameChange}
-            placeholder="Put your name here"
-          />
-        </div>
-        <div>
-          <label htmlFor="phone">Phone:</label>
-          <input
-            type="text"
-            id="phone"
-            name="phone"
-            value={newPhone}
-            onChange={handlePhoneChange}
-            placeholder="Put your tel phone here"
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter value={newSearch} onChange={handleSearchChange}></Filter>
+
+      <h3>add a new</h3>
+
+      <PersonForm
+        handleSubmit={handleSubmit}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newPhone={newPhone}
+        handlePhoneChange={handlePhoneChange}
+      ></PersonForm>
+
       <h2>phones</h2>
-      <ul>
-        {persons
-          .filter((person) =>
-            person.name.toLowerCase().includes(newSearch.toLowerCase())
-          )
-          .map((person) => (
-            <li key={person.id}>
-              {person.name} {person.phone}
-            </li>
-          ))}
-      </ul>
+      <Persons persons={persons} newSearch={newSearch}></Persons>
     </div>
   );
 };

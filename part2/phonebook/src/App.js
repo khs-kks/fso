@@ -2,10 +2,14 @@ import { useState } from "react";
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: "Arto Hellas", phone: "0888-415-990" },
+    { name: "Arto Hellas", phone: "040-123456", id: 1 },
+    { name: "Ada Lovelace", phone: "39-44-5323523", id: 2 },
+    { name: "Dan Abramov", phone: "12-43-234345", id: 3 },
+    { name: "Mary Poppendieck", phone: "39-23-6423122", id: 4 },
   ]);
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
+  const [newSearch, setNewSearch] = useState("");
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -17,7 +21,12 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const newPerson = { name: newName, phone: newPhone };
+    const newPerson = {
+      name: newName,
+      phone: newPhone,
+      id: persons.length + 1,
+    };
+
     let exists = false;
 
     persons.forEach((person) => {
@@ -35,9 +44,20 @@ const App = () => {
     }
   };
 
+  const handleSearchChange = (event) => {
+    setNewSearch(event.target.value);
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <input
+        type="text"
+        value={newSearch}
+        onChange={handleSearchChange}
+        placeholder="search for a person"
+      ></input>
+      <h2>add a new</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Name:</label>
@@ -58,18 +78,24 @@ const App = () => {
             name="phone"
             value={newPhone}
             onChange={handlePhoneChange}
-            placeholder="Put your tel number here"
+            placeholder="Put your tel phone here"
           />
         </div>
         <div>
           <button type="submit">add</button>
         </div>
       </form>
-      <h2>Numbers</h2>
+      <h2>phones</h2>
       <ul>
-        {persons.map((person) => (
-          <li key={person.name}>{person.name} {person.phone}</li>
-        ))}
+        {persons
+          .filter((person) =>
+            person.name.toLowerCase().includes(newSearch.toLowerCase())
+          )
+          .map((person) => (
+            <li key={person.id}>
+              {person.name} {person.phone}
+            </li>
+          ))}
       </ul>
     </div>
   );

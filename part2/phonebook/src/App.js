@@ -54,15 +54,16 @@ const PersonForm = (props) => {
   );
 };
 
-const Person = ({ person }) => {
+const Person = ({ person, handleDelete }) => {
   return (
     <li>
-      {person.name} {person.phone}
+      {person.name} {person.phone}{" "}
+      <button onClick={() => handleDelete(person.id)}> delete </button>
     </li>
   );
 };
 
-const Persons = ({ persons, newSearch }) => {
+const Persons = ({ persons, newSearch, handleDelete }) => {
   const filteredPersons = persons.filter((person) =>
     person.name.toLowerCase().includes(newSearch.toLowerCase())
   );
@@ -70,7 +71,7 @@ const Persons = ({ persons, newSearch }) => {
   return (
     <ul>
       {filteredPersons.map((person) => (
-        <Person key={person.id} person={person} />
+        <Person key={person.id} person={person} handleDelete={handleDelete} />
       ))}
     </ul>
   );
@@ -121,16 +122,6 @@ const App = () => {
         setNewName("");
         setNewPhone("");
       });
-
-      // axios
-      //   .post("http://localhost:3001/persons", newPerson)
-      //   .then((response) => {
-      //     // console.log(response);
-      //     const copiedPerson = { ...newPerson, id: response.data.id };
-      //     setPersons(persons.concat(copiedPerson));
-      //     setNewName("");
-      //     setNewPhone("");
-      //   });
     } else {
       alert(`${newName} already exists in the book`);
     }
@@ -138,6 +129,13 @@ const App = () => {
 
   const handleSearchChange = (event) => {
     setNewSearch(event.target.value);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      personService.remove(id);
+      setPersons(persons.filter((person) => person.id !== id));
+    }
   };
 
   return (
@@ -156,7 +154,11 @@ const App = () => {
       ></PersonForm>
 
       <h2>phones</h2>
-      <Persons persons={persons} newSearch={newSearch}></Persons>
+      <Persons
+        persons={persons}
+        newSearch={newSearch}
+        handleDelete={handleDelete}
+      ></Persons>
     </div>
   );
 };

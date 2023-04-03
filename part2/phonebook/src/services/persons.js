@@ -11,6 +11,17 @@ const create = (newObject) => {
   return request.then((response) => response.data);
 };
 
+const remove = (id) => {
+  axios
+    .delete(`${baseUrl}/${id}`)
+    .then((response) => {
+      console.log("Resource deleted successfully", response);
+    })
+    .catch((error) => {
+      console.log("Error deleting: " + error);
+    });
+};
+
 const update = (id, newObject) => {
   return axios.put(`${baseUrl}/${id}`, newObject);
 };
@@ -18,5 +29,6 @@ const update = (id, newObject) => {
 export default {
   getAll,
   create,
+  remove,
   update,
 };

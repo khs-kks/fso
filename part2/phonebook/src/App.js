@@ -83,8 +83,8 @@ const App = () => {
 
   useEffect(() => {
     axios.get("http://localhost:3001/persons").then((response) => {
-      console.log(response)
-      console.log(response.data)
+      // console.log(response)
+      // console.log(response.data)
       setPersons(response.data);
     });
   }, []);
@@ -102,7 +102,7 @@ const App = () => {
     const newPerson = {
       name: newName,
       phone: newPhone,
-      id: persons.length + 1,
+      // id: persons.length + 1,
     };
 
     let exists = false;
@@ -114,9 +114,15 @@ const App = () => {
     });
 
     if (!exists) {
-      setPersons(persons.concat(newPerson));
-      setNewName("");
-      setNewPhone("");
+      axios
+        .post("http://localhost:3001/persons", newPerson)
+        .then((response) => {
+          // console.log(response);
+          const copiedPerson = {...newPerson, id: response.data.id}
+          setPersons(persons.concat(copiedPerson));
+          setNewName("");
+          setNewPhone("");
+        });
     } else {
       alert(`${newName} already exists in the book`);
     }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import personService from "./services/persons";
 
 const Filter = (props) => {
   const { value, onChange } = props;
@@ -82,10 +83,10 @@ const App = () => {
   const [newSearch, setNewSearch] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
+    personService.getAll().then((response) => {
       // console.log(response)
       // console.log(response.data)
-      setPersons(response.data);
+      setPersons(response);
     });
   }, []);
 
@@ -114,15 +115,22 @@ const App = () => {
     });
 
     if (!exists) {
-      axios
-        .post("http://localhost:3001/persons", newPerson)
-        .then((response) => {
-          // console.log(response);
-          const copiedPerson = {...newPerson, id: response.data.id}
-          setPersons(persons.concat(copiedPerson));
-          setNewName("");
-          setNewPhone("");
-        });
+      personService.create(newPerson).then((response) => {
+        const copiedPerson = { ...newPerson, id: response.id };
+        setPersons(persons.concat(copiedPerson));
+        setNewName("");
+        setNewPhone("");
+      });
+
+      // axios
+      //   .post("http://localhost:3001/persons", newPerson)
+      //   .then((response) => {
+      //     // console.log(response);
+      //     const copiedPerson = { ...newPerson, id: response.data.id };
+      //     setPersons(persons.concat(copiedPerson));
+      //     setNewName("");
+      //     setNewPhone("");
+      //   });
     } else {
       alert(`${newName} already exists in the book`);
     }

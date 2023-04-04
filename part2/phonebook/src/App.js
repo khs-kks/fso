@@ -107,23 +107,39 @@ const App = () => {
       // id: persons.length + 1,
     };
 
-    let exists = false;
+    // let exists = false;
 
-    persons.forEach((person) => {
-      if (person.name === newPerson.name) {
-        exists = true;
-      }
-    });
+    // persons.forEach((person) => {
+    //   if (person.name === newPerson.name) {
+    //     exists = true;
+    //   }
+    // });
 
-    if (!exists) {
+    const index = persons.findIndex((person) => person.name === newPerson.name);
+
+    if (index === -1) {
       personService.create(newPerson).then((response) => {
         const copiedPerson = { ...newPerson, id: response.id };
         setPersons(persons.concat(copiedPerson));
         setNewName("");
         setNewPhone("");
       });
-    } else {
-      alert(`${newName} already exists in the book`);
+    } else if (
+      window.confirm(
+        `${newPerson.name} is already added to phonebook, replace the old number with a new one?`
+      )
+    ) {
+      const updatePerson = async (id, newObject) => {
+        const updatedPerson = await personService.update(id, newObject);
+        console.log(updatedPerson);
+        setPersons((prevPersons) =>
+          prevPersons.map((person) =>
+            person.id === id ? updatedPerson : person
+          )
+        );
+      };
+
+      updatePerson(persons[index].id, newPerson);
     }
   };
 

@@ -149,8 +149,17 @@ const App = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      personService.remove(id);
-      setPersons(persons.filter((person) => person.id !== id));
+      const removePerson = async (id) => {
+        try {
+          await personService.remove(id);
+          setPersons((persons) => persons.filter((person) => person.id !== id));
+        } catch (error) {}
+      };
+
+      removePerson(id);
+
+      // personService.remove(id);
+      // setPersons(persons.filter((person) => person.id !== id));
     }
   };
 

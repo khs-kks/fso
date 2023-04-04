@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const Filter = (props) => {
   const { value, onChange } = props;
@@ -82,6 +83,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newSearch, setNewSearch] = useState("");
+  const [msg, setNewMsg] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -123,6 +125,13 @@ const App = () => {
         setPersons(persons.concat(copiedPerson));
         setNewName("");
         setNewPhone("");
+        setNewMsg(
+          `${newPerson.name} has been added with ${newPerson.phone} number`
+        );
+
+        setTimeout(() => {
+          setNewMsg(null);
+        }, 5000);
       });
     } else if (
       window.confirm(
@@ -137,6 +146,13 @@ const App = () => {
             person.id === id ? updatedPerson : person
           )
         );
+        setNewMsg(
+          `${updatedPerson.name} has been updated with new phone: ${updatedPerson.phone}`
+        );
+
+        setTimeout(() => {
+          setNewMsg(null);
+        }, 5000);
       };
 
       updatePerson(persons[index].id, newPerson);
@@ -166,6 +182,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification msg={msg}></Notification>
       <Filter value={newSearch} onChange={handleSearchChange}></Filter>
 
       <h3>add a new</h3>

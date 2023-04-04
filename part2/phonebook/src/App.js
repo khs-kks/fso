@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import personService from "./services/persons";
-import Notification from "./components/Notification";
+import Notifications from "./components/Notification";
 
 const Filter = (props) => {
   const { value, onChange } = props;
@@ -83,7 +83,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [newSearch, setNewSearch] = useState("");
-  const [msg, setNewMsg] = useState(null);
+  const [msg, setNewMsg] = useState([]);
 
   useEffect(() => {
     personService.getAll().then((response) => {
@@ -109,14 +109,6 @@ const App = () => {
       // id: persons.length + 1,
     };
 
-    // let exists = false;
-
-    // persons.forEach((person) => {
-    //   if (person.name === newPerson.name) {
-    //     exists = true;
-    //   }
-    // });
-
     const index = persons.findIndex((person) => person.name === newPerson.name);
 
     if (index === -1) {
@@ -125,12 +117,16 @@ const App = () => {
         setPersons(persons.concat(copiedPerson));
         setNewName("");
         setNewPhone("");
+
         setNewMsg(
-          `${newPerson.name} has been added with ${newPerson.phone} number`
+          [
+            `${newPerson.name} has been added with ${newPerson.phone} number`,
+            true,
+          ].slice(0, 2)
         );
 
         setTimeout(() => {
-          setNewMsg(null);
+          setNewMsg([]);
         }, 5000);
       });
     } else if (
@@ -139,20 +135,32 @@ const App = () => {
       )
     ) {
       const updatePerson = async (id, newObject) => {
-        const updatedPerson = await personService.update(id, newObject);
-        console.log(updatedPerson);
-        setPersons((prevPersons) =>
-          prevPersons.map((person) =>
-            person.id === id ? updatedPerson : person
-          )
-        );
-        setNewMsg(
-          `${updatedPerson.name} has been updated with new phone: ${updatedPerson.phone}`
-        );
+        try {
+          const updatedPerson = await personService.update(id, newObject);
 
-        setTimeout(() => {
-          setNewMsg(null);
-        }, 5000);
+          setPersons((prevPersons) =>
+            prevPersons.map((person) =>
+              person.id === id ? updatedPerson : person
+            )
+          );
+          setNewMsg(
+            [
+              `${updatedPerson.name} has been updated with new phone: ${updatedPerson.phone}`,
+              true,
+            ].slice(0, 2)
+          );
+
+          setTimeout(() => {
+            setNewMsg([]);
+          }, 5000);
+        } catch (error) {
+          setNewMsg(
+            [
+              `${newObject.name} has probably been deleted on the server`,
+              false,
+            ].slice(0, 2)
+          );
+        }
       };
 
       updatePerson(persons[index].id, newPerson);
@@ -168,8 +176,19 @@ const App = () => {
       const removePerson = async (id) => {
         try {
           await personService.remove(id);
+
+          setNewMsg(
+            [`The person has been deleted from the server`, true].slice(0, 2)
+          );
           setPersons((persons) => persons.filter((person) => person.id !== id));
-        } catch (error) {}
+        } catch (error) {
+          setNewMsg(
+            [`The person could not be deleted for some reason...`, false].slice(
+              0,
+              2
+            )
+          );
+        }
       };
 
       removePerson(id);
@@ -178,31 +197,57 @@ const App = () => {
       // setPersons(persons.filter((person) => person.id !== id));
     }
   };
+  if (msg.length) {
+    return (
+      <div>
+        <h2>Phonebook</h2>
+        <Notifications msg={msg[0]} successfull={msg[1]}></Notifications>
+        <Filter value={newSearch} onChange={handleSearchChange}></Filter>
 
-  return (
-    <div>
-      <h2>Phonebook</h2>
-      <Notification msg={msg}></Notification>
-      <Filter value={newSearch} onChange={handleSearchChange}></Filter>
+        <h3>add a new</h3>
 
-      <h3>add a new</h3>
+        <PersonForm
+          handleSubmit={handleSubmit}
+          newName={newName}
+          handleNameChange={handleNameChange}
+          newPhone={newPhone}
+          handlePhoneChange={handlePhoneChange}
+        ></PersonForm>
 
-      <PersonForm
-        handleSubmit={handleSubmit}
-        newName={newName}
-        handleNameChange={handleNameChange}
-        newPhone={newPhone}
-        handlePhoneChange={handlePhoneChange}
-      ></PersonForm>
+        <h2>phones</h2>
+        <Persons
+          persons={persons}
+          newSearch={newSearch}
+          handleDelete={handleDelete}
+        ></Persons>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <h2>Phonebook</h2>
 
-      <h2>phones</h2>
-      <Persons
-        persons={persons}
-        newSearch={newSearch}
-        handleDelete={handleDelete}
-      ></Persons>
-    </div>
-  );
+        <Filter value={newSearch} onChange={handleSearchChange}></Filter>
+
+        <h3>add a new</h3>
+
+        <PersonForm
+          handleSubmit={handleSubmit}
+          newName={newName}
+          handleNameChange={handleNameChange}
+          newPhone={newPhone}
+          handlePhoneChange={handlePhoneChange}
+        ></PersonForm>
+
+        <h2>phones</h2>
+        <Persons
+          persons={persons}
+          newSearch={newSearch}
+          handleDelete={handleDelete}
+        ></Persons>
+      </div>
+    );
+  }
 };
 
 export default App;

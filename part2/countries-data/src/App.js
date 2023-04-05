@@ -9,9 +9,6 @@ function App() {
   const [allCountries, setAllCountries] = useState([]);
 
 
-  //TODO fetch the flag and display it
-
-  
   // useEffect(() => {
   //   axios.get("https://restcountries.com/v3.1/all").then((response) => {
   //     // console.log(response.data[0].flags.svg);

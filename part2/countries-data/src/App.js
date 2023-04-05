@@ -12,15 +12,29 @@ function App() {
   //TODO fetch the flag and display it
 
   
+  // useEffect(() => {
+  //   axios.get("https://restcountries.com/v3.1/all").then((response) => {
+  //     // console.log(response.data[0].flags.svg);
+  //     // console.log(response.data.length);
+  //     setAllCountries(response.data);
+  //     // console.log(response.data)
+  //     // setPersons(response);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    axios.get("https://restcountries.com/v3.1/all").then((response) => {
-      // console.log(response.data[0].flags.svg);
-      // console.log(response.data.length);
-      setAllCountries(response.data);
-      // console.log(response.data)
-      // setPersons(response);
-    });
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("https://restcountries.com/v3.1/all");
+        setAllCountries(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    fetchData();
   }, []);
+  
 
   const handleSearchChange = (event) => {
     setNewSearch(event.target.value);
